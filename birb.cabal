@@ -7,20 +7,19 @@ cabal-version: 1.12
 name:           birb
 version:        0.1.0.0
 description:    Please see the README on GitHub at <https://github.com/githubuser/birb#readme>
-homepage:       https://github.com/githubuser/birb#readme
-bug-reports:    https://github.com/githubuser/birb/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2023 Author name here
-license:        BSD3
+homepage:       https://github.com/marvinborner/birb#readme
+bug-reports:    https://github.com/marvinborner/birb/issues
+author:         Marvin Borner
+maintainer:     git@marvinborner.de
+copyright:      2023 Marvin Borner
+license:        MIT
 build-type:     Simple
 extra-source-files:
-    README.md
-    CHANGELOG.md
+    readme.md
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/birb
+  location: https://github.com/marvinborner/birb
 
 library
   exposed-modules:
@@ -32,6 +31,7 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , containers
   default-language: Haskell2010
 
 executable birb-exe
@@ -44,6 +44,7 @@ executable birb-exe
   build-depends:
       base >=4.7 && <5
     , birb
+    , containers
   default-language: Haskell2010
 
 test-suite birb-test
@@ -57,4 +58,5 @@ test-suite birb-test
   build-depends:
       base >=4.7 && <5
     , birb
+    , containers
   default-language: Haskell2010

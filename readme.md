@@ -42,6 +42,7 @@ a PR to improve biological accuracy.
 - 🦢🐦🐦 $\rightsquigarrow$ 🐔
 - 🦜🐤 $\rightsquigarrow$ 🐥
 - 🦜🦜 $\rightsquigarrow$ 🕊️
+- 🐧🐧 $\rightsquigarrow$ 🐦
 
 ## Arithmetic
 
