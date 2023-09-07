@@ -34,7 +34,7 @@ library
     , containers
   default-language: Haskell2010
 
-executable birb-exe
+executable birb
   main-is: Main.hs
   other-modules:
       Paths_birb

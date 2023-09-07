@@ -37,7 +37,7 @@ library:
   source-dirs: src
 
 executables:
-  birb-exe:
+  birb:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
