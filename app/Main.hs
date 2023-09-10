@@ -1,3 +1,5 @@
+{-# LANGUAGE LambdaCase #-}
+
 module Main
   ( main
   ) where
@@ -8,6 +10,7 @@ import           Data.Bifunctor                 ( first
 import           Data.Char                      ( digitToInt
                                                 , isDigit
                                                 )
+import           Data.IORef
 import           Data.Map                       ( Map )
 import qualified Data.Map                      as Map
 import           System.Environment             ( getArgs )
@@ -61,19 +64,35 @@ subst i (Idx j) c | i == j    = c
 subst i (App a b) c = App (subst i a c) (subst i b c)
 subst i (Abs a  ) c = Abs (subst (i + 1) a (shift 0 c))
 
-nf :: Term -> Term
-nf (App l r) = case nf l of
-  Abs t -> nf (subst 0 t r)
-  t     -> App t (nf r)
-nf (Abs t) = Abs (nf t)
-nf t       = t
+nf :: Term -> IO Term
+nf t = do -- TODO: pointfree??
+  i <- newIORef 100000000
+  go i t
+ where
+  go :: IORef Integer -> Term -> IO Term
+  go i t = do -- oracle
+    readIORef i >>= \case
+      0 -> do
+        putStrLn "💥 potential infinite loop, continue? [yn]"
+        getLine >>= \case
+          "y" -> writeIORef i (-2) >> re i t
+          _   -> return t
+      (-1) -> return t
+      _    -> modifyIORef i (subtract 1) >> re i t
+
+  re :: IORef Integer -> Term -> IO Term
+  re i (App l r) = go i l >>= \case
+    Abs t -> go i (subst 0 t r)
+    t     -> App t <$> go i r
+  re i (Abs t) = Abs <$> go i t
+  re _ t       = pure t
 
 fromBirbs :: String -> Term
 fromBirbs s =
   let birbsies = Map.fromList $ second parse <$> birbs
       filtered = filter (`Map.member` birbsies) s
       term     = termify filtered birbsies
-  in  nf term
+  in  term
 
 fromTerm :: Term -> String
 fromTerm t =
@@ -85,9 +104,12 @@ main :: IO ()
 main = do
   args <- getArgs
   file <- readFile (head args)
-  let reduced = fromBirbs file
-  let duced   = fromTerm reduced
-  putStrLn duced
+  let birbified   = fromBirbs file
+  let retermified = fromTerm birbified
+  putStrLn $ "input: " ++ retermified
+  normalBirbs <- nf birbified
+  let rebirbified = fromTerm normalBirbs
+  putStrLn $ "reduced: " ++ rebirbified
   return ()
 
 -- this isn't really relevant but I'm too lazy to type the terms manually
@@ -111,7 +133,7 @@ birbs =
   , ('\x1F423', "!!!@0@21") -- hatching chick
   , ('\x1F989', "!!@0@10") -- owl
   , ('\x1F986', "!!@0@12") -- duck
-  , ('\x1F9A4', "!!@01") -- dodo
+  , ('\x1F9A4', "!@!@1@00!@1@00") -- dodo
   , ('\x1F9A9', "!!!@@201") -- flamingo
   , ('\x1F9A2', "!!!@@20@10") -- swan
   , ('\x1FABD', "!!!!@@3@20@10") -- wing
