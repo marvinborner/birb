@@ -73,19 +73,20 @@ subst i (Abs a  ) c = Abs (subst (i + 1) a (shift 0 c))
 
 nf :: Term -> IO Term
 nf o = do -- TODO: pointfree??
-  i <- newIORef 1000
+  -- i <- newIORef 1000
+  i <- newIORef 100000000
   go i o
  where
   go :: IORef Integer -> Term -> IO Term
   go i t = do -- oracle
     readIORef i >>= \case
-      0    -> writeIORef i (-1) >> return (Idx 0)
-      -- 0 -> do
-      --   putStrLn "💥 potential infinite loop, continue? [yn]"
-      --   getLine >>= \case
-      --     "y" -> writeIORef i (-2) >> re i t
-      --     "n" -> writeIORef i (-1) >> return t
-      --     _   -> go i t
+      -- 0    -> writeIORef i (-1) >> return (Idx 0)
+      0 -> do
+        putStrLn "💥 potential infinite loop, continue? [yn]"
+        getLine >>= \case
+          "y" -> writeIORef i (-2) >> re i t
+          "n" -> writeIORef i (-1) >> return t
+          _   -> go i t
       (-1) -> return t
       _    -> modifyIORef i (subtract 1) >> re i t
 
@@ -122,17 +123,17 @@ bruteForce s n =
   in  putStrLn ("trying " ++ show n) >> go termified
 
 main :: IO ()
-main = mapM_ (bruteForce "!!@1@1@1@1@10") [1 .. 10]
--- main = do
---   args <- getArgs
---   file <- readFile (head args)
---   let termified   = fromBirbs file
---   let rebirbified = fromTerm termified
---   putStrLn $ "input: " ++ rebirbified
---   normalBirbs <- nf termified
---   let retermified = fromTerm normalBirbs
---   putStrLn $ "reduced: " ++ retermified
---   return ()
+-- main = mapM_ (bruteForce "...") [1 .. 10]
+main = do
+  args <- getArgs
+  file <- readFile (head args)
+  let termified   = fromBirbs file
+  let rebirbified = fromTerm termified
+  putStrLn $ "input: " ++ rebirbified
+  normalBirbs <- nf termified
+  let retermified = fromTerm normalBirbs
+  putStrLn $ "reduced: " ++ retermified
+  return ()
 
 -- this isn't really relevant but I'm too lazy to type the terms manually
 parse :: String -> Term

@@ -1,6 +1,8 @@
+decoded:
    (s b) (k i)
 -> ((i ((b ((i s) b)) k)) i)
 
+encoded:
 🐦🐧🐦 wrapper
   🦢🐧 inc
     🐥🐦 zero

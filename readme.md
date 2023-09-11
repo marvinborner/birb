@@ -10,23 +10,23 @@ lambda calculus.
 Unfortunately, the Unicode standard does not yet have many
 (single-character) birds. These are the ones currently mapped/supported:
 
-| emoji | animal         | combinator   | bruijn              | term                               |
-|:-----:|----------------|--------------|---------------------|------------------------------------|
-|  🦉   | owl            | owl          | `[[0(10)]]`         | $\lambda ab.b(ab)$                 |
-|  🦅   | eagle          | eagle        | `[[[[[43(210)]]]]]` | $\lambda abcde.ab(cde)$            |
-|  🪽   | wing           | phoenix      | `[[[[3(20)(10)]]]]` | $\lambda abcd.a(bd)(cd)$           |
-|  🕊️   | dove           | dove         | `[[[[32(10)]]]]`    | $\lambda abcd.ab(cd)$              |
-|  🦜   | parrot         | mockingbird  | `[00]`              | $\lambda a.aa$                     |
-|  🦆   | duck           | quacky       | `[[[0(12)]]]`       | $\lambda abc.c(ba)$                |
-|  🐤   | touring chick  | turing       | `[[0(110)]]`        | $\lambda ab.b(aab)$                |
-|  🐥   | kool chick     | kestrel      | `[[1]]`             | $\lambda ab.a$                     |
-|  🐣   | hatching chick | quirky       | `[[[0(21)]]]`       | $\lambda abc.c(ab)$                |
-|  🐦   | simple bird    | identity     | `[0]`               | $\lambda a.a$                      |
-|  🦚   | peacock        | queer        | `[[[1(20)]]]`       | $\lambda abc.b(ac)$                |
-|  🦤   | dodo           | sage         | `[[0(11)][0(11)]]`  | $\lambda ab.b(aa)\lambda ab.b(aa)$ |
-|  🐧   | penguin        | blackbird    | `[[[2(10)]]]`       | $\lambda abc.a(bc)$                |
-|  🦢   | swan           | substitution | `[[[20(10)]]]`      | $\lambda abc.ac(bc)$               |
-|  🦩   | flamingo       | cardinal     | `[[[201]]]`         | $\lambda abc.acb$                  |
+| emoji | animal         | combinator   | term                               |
+|:-----:|----------------|--------------|------------------------------------|
+|  🦉   | owl            | owl          | $\lambda ab.b(ab)$                 |
+|  🦅   | eagle          | eagle        | $\lambda abcde.ab(cde)$            |
+|  🪽   | wing           | phoenix      | $\lambda abcd.a(bd)(cd)$           |
+|  🕊️   | dove           | dove         | $\lambda abcd.ab(cd)$              |
+|  🦜   | parrot         | mockingbird  | $\lambda a.aa$                     |
+|  🦆   | duck           | quacky       | $\lambda abc.c(ba)$                |
+|  🐤   | touring chick  | turing       | $\lambda ab.b(aab)$                |
+|  🐥   | kool chick     | kestrel      | $\lambda ab.a$                     |
+|  🐣   | hatching chick | quirky       | $\lambda abc.c(ab)$                |
+|  🐦   | simple bird    | identity     | $\lambda a.a$                      |
+|  🦚   | peacock        | queer        | $\lambda abc.b(ac)$                |
+|  🦤   | dodo           | sage         | $\lambda ab.a(bb)\lambda ab.a(bb)$ |
+|  🐧   | penguin        | blackbird    | $\lambda abc.a(bc)$                |
+|  🦢   | swan           | substitution | $\lambda abc.ac(bc)$               |
+|  🦩   | flamingo       | cardinal     | $\lambda abc.acb$                  |
 
 Lonely/unmatched birbs: 🐔🦃🐓
 
@@ -35,10 +35,13 @@ Lonely/unmatched birbs: 🐔🦃🐓
 - `[birb]+`: Birb
 - everything else: Comment
 
+Syntax errors are impossible as long as you use at least one birb.
+
 # Semantics
 
 Birbs stagger as they walk: they are reduced in alternating associative
-order, starting with birb index $\lfloor\frac{\texttt{len}}{2}\rfloor$:
+order, starting with left associativity at birb index
+$\lfloor\frac{\texttt{len}}{2}\rfloor$:
 
     🐦🐦 -> (🐦🐦)
     🐦🐦🐦 -> ((🐦🐦)🐦)
@@ -46,46 +49,65 @@ order, starting with birb index $\lfloor\frac{\texttt{len}}{2}\rfloor$:
     🐦🐦🐦🐦🐦 -> ((🐦((🐦🐦)🐦))🐦)
     🐦🐦🐦🐦🐦🐦 -> (🐦((🐦((🐦🐦)🐦))🐦))
     🐦🐦🐦🐦🐦🐦🐦 -> ((🐦((🐦((🐦🐦)🐦))🐦))🐦)
+    ...
 
 # Examples
 
-You can find more examples in the `samples/` directory.
+You can find more examples (with comments) in the `samples/` directory.
 
 ## Relationships
 
-- 🦉🐦 $\rightsquigarrow$ 🦜
+- 🪽🐦 $\rightsquigarrow$ 🦢
 - 🦢🐦 $\rightsquigarrow$ 🦉
+- 🦉🐦 $\rightsquigarrow$ 🦜
+- 🕊️🐦 $\rightsquigarrow$ 🐧
 - 🐧🐧 $\rightsquigarrow$ 🕊️
 - 🦩🐧 $\rightsquigarrow$ 🦚
 - 🦩🦚 $\rightsquigarrow$ 🐧
+- 🦩🦆 $\rightsquigarrow$ 🐣
 
-One can only imagine what happens if two parrots repeat each other: 🦜🦜
-$\rightsquigarrow$ 💥
+One can only imagine what happens if two parrots talk to each other:
+🦜🦜 $\rightsquigarrow$ 💥. The same happens with 🐤🐤; they just can’t
+stop waddling!
 
 ## Arithmetic
 
 For this example I use the Church numerals. Zero would then be encoded
 as 🐥🐦. The successor function can be written as 🦢🐧:
 
-- 🐦🐧🐦🦢🐧🐥🐦 $\rightsquigarrow$ λλ(10) – (Church numeral 1)
-- 🐦🐧🐦🐧🕊️🦢🐧🦢🐧🐥🐦 $\rightsquigarrow$ λλ(1(10)) – (Church numeral
-  2)  
+- 🐦🐧🐦🦢🐧🐥🐦 $\rightsquigarrow\lambda\lambda(10)$ – (Church numeral
+  1)  
+- 🐦🐧🐦🐧🕊️🦢🐧🦢🐧🐥🐦 $\rightsquigarrow\lambda(1(10))$ – (Church
+  numeral 2)
 
 Similarly, one can very obviously translate the Church addition function
-to 🐧🦢🐥🦢🕊️. Now, to calculate $1+2$ based on their increments from
-zero:
+to 🪽🐧. Now, to calculate $1+2$ based on their increments from zero:
 
-- 🦢🐧🦢🐧🐥🐦
+- 🐦🐦🕊️🐧🕊️🐧🐦🐧🕊️🐧🕊️🪽🐧🦢🐧🦢🐧🐥🐦🦢🐧🐥🐦
+  $\rightsquigarrow\lambda(1(1(10)))$ – (Church numeral 3)
 
 Also: 🐧 is $a\cdot b$, 🦜 is $n^n$ and 🦚🐦 $a^b$.
 
-Note that there are many alternative ways to do arithmetic. Try writing
-the functions above with other birbs!
+Note that there exist many alternative ways to do arithmetic. Try
+writing the functions above with other birbs!
+
+## Containers
+
+You can create a pair $\langle X,Y\rangle$ using `🦩🦩🦩YX`.
+
+Typically, one would now construct a list using repeated application of
+pairs (Boehm-Berarducci/Church encoding). However, due to the reversed
+application and alternating associativity, the Mogensen-Scott encoding
+is more suitable:
+
+List $\langle X_1,X_2,\dots,X_n\rangle$: `[🦩]ⁿ🦩X2X1...XN`.
 
 ## Busy ~~beavers~~ birbs
 
-- The touring eagle: 🐦🐦🐦🦅🐤🦅🐤🦅🐤 (~20M BLC bits)
-- more? PR!
+Contestants:
+
+- *The touring eagle*: `[🐦]ⁿ[🦅🐤]ⁿ` ($n=3$: 9 birbs, ~20M BLC bits)
+- better? PR!
 
 # Usage
 
@@ -102,9 +124,12 @@ sometimes manually converted the term back to birbs.
 
 # Turing-completeness
 
-The language is probably Turing complete. If the language supported
-left- *and* right-associativity, 🐧 would be enough to prove its
-completeness.
+Birb is Turing complete.
+
+It turns out that even its sub-language $\Sigma=\{🦢🐥\}$ (SK) is Turing
+complete, since the semantics allow an initial construction of 🐦 using
+`((🦢 🐥) 🐥)`. By doing that, birb is equivalent to the
+[Jot](https://esolangs.org/wiki/Jot) variant of Iota calculus.
 
 ------------------------------------------------------------------------
 

@@ -1,7 +1,9 @@
+decoded:
    b (s b) (s b) (k i)
 -> (i ((i ((b ((d s) b)) s)) b)) (k i)
 -> ((i ((b ((i ((b ((d s) b)) s)) b)) k)) i)
 
+encoded:
 🐦🐧🐦🐧🕊️ wrapper
   🦢🐧 inc
     🦢🐧 inc
