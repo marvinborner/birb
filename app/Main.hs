@@ -4,13 +4,20 @@ module Main
   ( main
   ) where
 
+import           Control.Concurrent.Async       ( mapConcurrently )
+import           Control.Monad                  ( void )
 import           Data.Bifunctor                 ( first
                                                 , second
                                                 )
 import           Data.Char                      ( digitToInt
                                                 , isDigit
                                                 )
-import           Data.IORef
+import           Data.IORef                     ( IORef
+                                                , modifyIORef
+                                                , newIORef
+                                                , readIORef
+                                                , writeIORef
+                                                )
 import           Data.Map                       ( Map )
 import qualified Data.Map                      as Map
 import           System.Environment             ( getArgs )
@@ -35,8 +42,8 @@ birbify t m | t `Map.member` m = [Map.findWithDefault invalid t m]
             | (App l r) <- t   = "(" ++ birbify l m ++ " " ++ birbify r m ++ ")"
             | (Idx i) <- t     = show i
 
-termify :: String -> Map Birb Term -> Term
-termify s m = foldlr (odd $ length lst) lst
+termify :: Map Birb Term -> String -> Term
+termify m s = foldlr (odd $ length lst) lst
  where
   go [c     ] = [Map.findWithDefault invalid c m]
   go (c : cs) = go [c] ++ go cs
@@ -65,18 +72,20 @@ subst i (App a b) c = App (subst i a c) (subst i b c)
 subst i (Abs a  ) c = Abs (subst (i + 1) a (shift 0 c))
 
 nf :: Term -> IO Term
-nf t = do -- TODO: pointfree??
-  i <- newIORef 100000000
-  go i t
+nf o = do -- TODO: pointfree??
+  i <- newIORef 1000
+  go i o
  where
   go :: IORef Integer -> Term -> IO Term
   go i t = do -- oracle
     readIORef i >>= \case
-      0 -> do
-        putStrLn "💥 potential infinite loop, continue? [yn]"
-        getLine >>= \case
-          "y" -> writeIORef i (-2) >> re i t
-          _   -> return t
+      0    -> writeIORef i (-1) >> return (Idx 0)
+      -- 0 -> do
+      --   putStrLn "💥 potential infinite loop, continue? [yn]"
+      --   getLine >>= \case
+      --     "y" -> writeIORef i (-2) >> re i t
+      --     "n" -> writeIORef i (-1) >> return t
+      --     _   -> go i t
       (-1) -> return t
       _    -> modifyIORef i (subtract 1) >> re i t
 
@@ -91,7 +100,7 @@ fromBirbs :: String -> Term
 fromBirbs s =
   let birbsies = Map.fromList $ second parse <$> birbs
       filtered = filter (`Map.member` birbsies) s
-      term     = termify filtered birbsies
+      term     = termify birbsies filtered
   in  term
 
 fromTerm :: Term -> String
@@ -100,17 +109,30 @@ fromTerm t =
       termsies = Map.fromList $ first parse <$> flipped
   in  birbify t termsies
 
+bruteForce :: String -> Integer -> IO ()
+bruteForce s n =
+  let combos    = mapM (const $ map fst birbs) [1 .. n]
+      birbsies  = Map.fromList $ second parse <$> birbs
+      termified = termify birbsies <$> combos
+      target    = parse s
+      huh t = nf t >>= \case
+        r | r == target -> putStrLn (fromTerm t)
+          | otherwise   -> return ()
+      go ts = void $ mapConcurrently huh ts
+  in  putStrLn ("trying " ++ show n) >> go termified
+
 main :: IO ()
-main = do
-  args <- getArgs
-  file <- readFile (head args)
-  let birbified   = fromBirbs file
-  let retermified = fromTerm birbified
-  putStrLn $ "input: " ++ retermified
-  normalBirbs <- nf birbified
-  let rebirbified = fromTerm normalBirbs
-  putStrLn $ "reduced: " ++ rebirbified
-  return ()
+main = mapM_ (bruteForce "!!@1@1@1@1@10") [1 .. 10]
+-- main = do
+--   args <- getArgs
+--   file <- readFile (head args)
+--   let termified   = fromBirbs file
+--   let rebirbified = fromTerm termified
+--   putStrLn $ "input: " ++ rebirbified
+--   normalBirbs <- nf termified
+--   let retermified = fromTerm normalBirbs
+--   putStrLn $ "reduced: " ++ retermified
+--   return ()
 
 -- this isn't really relevant but I'm too lazy to type the terms manually
 parse :: String -> Term

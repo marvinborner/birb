@@ -21,6 +21,7 @@ description:         Please see the README on GitHub at <https://github.com/gith
 dependencies:
 - base >= 4.7 && < 5
 - containers
+- async
 
 ghc-options:
 - -Wall
@@ -44,6 +45,8 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    - -O3
+    - -fllvm
     dependencies:
     - birb
 
