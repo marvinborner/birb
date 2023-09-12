@@ -133,5 +133,5 @@ complete, since the semantics allow an initial construction of 🐦 using
 
 ------------------------------------------------------------------------
 
-The idea of the language was originally proposed in 2021 by an
-unknown(?) author on [Esolang](https://esolangs.org/wiki/Birb).
+The idea of the language was originally proposed in 2021 by @SCKelement
+on [Esolang](https://esolangs.org/wiki/Birb).
