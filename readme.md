@@ -77,14 +77,14 @@ as 🐥🐦. The successor function can be written as 🦢🐧:
 
 - 🐦🐧🐦🦢🐧🐥🐦 $\rightsquigarrow\lambda\lambda(10)$ – (Church numeral
   1)  
-- 🐦🐧🐦🐧🕊️🦢🐧🦢🐧🐥🐦 $\rightsquigarrow\lambda(1(10))$ – (Church
-  numeral 2)
+- 🐦🐧🐦🐧🕊️🦢🐧🦢🐧🐥🐦 $\rightsquigarrow\lambda\lambda(1(10))$ –
+  (Church numeral 2)
 
 Similarly, one can very obviously translate the Church addition function
 to 🪽🐧. Now, to calculate $1+2$ based on their increments from zero:
 
 - 🐦🐦🕊️🐧🕊️🐧🐦🐧🕊️🐧🕊️🪽🐧🦢🐧🦢🐧🐥🐦🦢🐧🐥🐦
-  $\rightsquigarrow\lambda(1(1(10)))$ – (Church numeral 3)
+  $\rightsquigarrow\lambda\lambda(1(1(10)))$ – (Church numeral 3)
 
 Also: 🐧 is $a\cdot b$, 🦜 is $n^n$ and 🦚🐦 $a^b$.
 
@@ -124,12 +124,12 @@ sometimes manually converted the term back to birbs.
 
 # Turing-completeness
 
-Birb is Turing complete.
-
-It turns out that even its sub-language $\Sigma=\{🦢🐥\}$ (SK) is Turing
-complete, since the semantics allow an initial construction of 🐦 using
-`((🦢 🐥) 🐥)`. By doing that, birb is equivalent to the
-[Jot](https://esolangs.org/wiki/Jot) variant of Iota calculus.
+Birb is Turing complete, since one can construct any term of the
+[Jot](https://esolangs.org/wiki/Jot) variant of Iota. A Jot term
+`((X s) k)` is equivalent to `🐦X🦢🐥`. Similarly, `(s (k X))` is
+equivalent to `🐦🐦🐧🦢🐥X`. This can be extended for arbitrary long terms
+using increasingly more complicated construction of composition
+combinators.
 
 ------------------------------------------------------------------------
 
