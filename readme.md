@@ -127,7 +127,7 @@ sometimes manually converted the term back to birbs.
 Birb is Turing complete, since one can construct any term of the
 [Jot](https://esolangs.org/wiki/Jot) variant of Iota. A Jot term
 `((X s) k)` is equivalent to `🐦X🦢🐥`. Similarly, `(s (k X))` is
-equivalent to `🐦🐦🐧🦢🐥X`. This can be extended for arbitrary long terms
+equivalent to `🐦🦆X🐥🦢`. This can be extended for arbitrary long terms
 using increasingly more complicated construction of composition
 combinators.
 

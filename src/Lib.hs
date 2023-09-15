@@ -14,12 +14,6 @@ import           Data.Bifunctor                 ( first
 import           Data.Char                      ( digitToInt
                                                 , isDigit
                                                 )
-import           Data.IORef                     ( IORef
-                                                , modifyIORef
-                                                , newIORef
-                                                , readIORef
-                                                , writeIORef
-                                                )
 import           Data.Map                       ( Map )
 import qualified Data.Map                      as Map
 import           Term
@@ -48,45 +42,6 @@ termify m s = foldlr (odd $ length lst) lst
   foldlr True  xs       = let t = foldlr False (init xs) in App t (last xs)
   foldlr False (x : xs) = let t = foldlr True xs in App x t
   foldlr _     _        = invalid
-
-shift :: Int -> Term -> Term
-shift i (Idx j) | i <= j    = Idx $ j + 1
-                | otherwise = Idx j
-shift i (App a b) = App (shift i a) (shift i b)
-shift i (Abs a  ) = Abs (shift (i + 1) a)
-
-subst :: Int -> Term -> Term -> Term
-subst i (Idx j) c | i == j    = c
-                  | j > i     = Idx $ j - 1
-                  | otherwise = Idx j
-subst i (App a b) c = App (subst i a c) (subst i b c)
-subst i (Abs a  ) c = Abs (subst (i + 1) a (shift 0 c))
-
-nf :: Term -> IO Term
-nf o = do -- TODO: pointfree??
-  -- i <- newIORef 1000
-  i <- newIORef 100000000
-  go i o
- where
-  go :: IORef Integer -> Term -> IO Term
-  go i t = do -- oracle
-    readIORef i >>= \case
-      -- 0    -> writeIORef i (-1) >> return (Idx 0)
-      0 -> do
-        putStrLn "💥 potential infinite loop, continue? [yn]"
-        getLine >>= \case
-          "y" -> writeIORef i (-2) >> re i t
-          "n" -> writeIORef i (-1) >> return t
-          _   -> go i t
-      (-1) -> return t
-      _    -> modifyIORef i (subtract 1) >> re i t
-
-  re :: IORef Integer -> Term -> IO Term
-  re i (App l r) = go i l >>= \case
-    Abs t -> go i (subst 0 t r)
-    t     -> App t <$> go i r
-  re i (Abs t) = Abs <$> go i t
-  re _ t       = pure t
 
 fromBirbs :: String -> Term
 fromBirbs s =

@@ -14,7 +14,9 @@ transpile = do
   let term = fromBLC file
   putStrLn $ "input: " ++ show term
   let ski = transpileSKI term
-  putStrLn $ "transpiled: " ++ show ski
+  putStrLn $ "SKI transpiled: " ++ show ski
+  let birb = transpileBirb ski
+  putStrLn $ "Birb transpiled: " ++ show birb
   return ()
 
 reduce :: IO ()
