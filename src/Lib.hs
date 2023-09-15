@@ -22,20 +22,10 @@ import           Data.IORef                     ( IORef
                                                 )
 import           Data.Map                       ( Map )
 import qualified Data.Map                      as Map
-
-data Term = Abs Term | App Term Term | Idx Int
-  deriving (Eq, Ord)
+import           Term
+import           Utils
 
 type Birb = Char
-
-invalid :: a
-invalid = error "invalid program state"
-
-instance Show Term where
-  showsPrec _ (Abs body) = showString "[" . shows body . showString "]"
-  showsPrec _ (App lhs rhs) =
-    showString "(" . shows lhs . showString " " . shows rhs . showString ")"
-  showsPrec _ (Idx i) = shows i
 
 birbify :: Term -> Map Term Birb -> String
 birbify t m | t `Map.member` m = [Map.findWithDefault invalid t m]

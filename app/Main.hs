@@ -4,10 +4,21 @@ module Main
 
 import           Lib
 import           System.Environment             ( getArgs )
+import           Term
+import           Transpile
 
-main :: IO ()
--- main = mapM_ (bruteForce "...") [1 .. 10]
-main = do
+transpile :: IO ()
+transpile = do
+  args <- getArgs
+  file <- readFile (head args)
+  let term = fromBLC file
+  putStrLn $ "input: " ++ show term
+  let ski = transpileSKI term
+  putStrLn $ "transpiled: " ++ show ski
+  return ()
+
+reduce :: IO ()
+reduce = do
   args <- getArgs
   file <- readFile (head args)
   let termified   = fromBirbs file
@@ -17,3 +28,7 @@ main = do
   let retermified = fromTerm normalBirbs
   putStrLn $ "reduced: " ++ retermified
   return ()
+
+main :: IO ()
+main = transpile
+-- main = mapM_ (bruteForce "...") [1 .. 10]

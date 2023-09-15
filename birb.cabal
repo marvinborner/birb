@@ -24,6 +24,9 @@ source-repository head
 library
   exposed-modules:
       Lib
+      Term
+      Transpile
+      Utils
   other-modules:
       Paths_birb
   hs-source-dirs:
