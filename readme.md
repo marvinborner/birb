@@ -28,7 +28,7 @@ Unfortunately, the Unicode standard does not yet have many
 |  🦢   | swan           | substitution | $\lambda abc.ac(bc)$               |
 |  🦩   | flamingo       | cardinal     | $\lambda abc.acb$                  |
 
-Lonely/unmatched birbs: 🐔🦃🐓
+Lonely/unmatched birbs: 🐔🦃🐓🪿
 
 # Syntax
 
@@ -109,13 +109,32 @@ Contestants:
 - *The touring eagle*: `[🐦]ⁿ[🦅🐤]ⁿ` ($n=3$: 9 birbs, ~20M BLC bits)
 - better? PR!
 
+# Transpiler
+
+I created a lambda calculus to Birb transpiler. It works by converting
+binary lambda calculus to SKI combinators, which then get converted to
+Jot and back to SKI combinators. The resulting SKI combinators then get
+converted to Birbs.
+
+The reason I convert to Jot first is that Birbs semantics don’t allow
+trivial transpilation from arbitrary SKI expressions. With Jot however,
+applications with non-associative expressions like `((s k) (k s))` are
+impossible, as only a single non-associative application exists (the
+innermost/deepest expression).
+
+With all these conversions, the resulting transpiled Birb code is big,
+ugly and slow. There should be a way to optimize the transpilation
+process, but it’s probably a bit more complicated.
+
 # Usage
 
 Install [Haskell’s
 stack](https://docs.haskellstack.org/en/stable/install_and_upgrade/).
 Then,
 
-- `stack run -- file.birb` or `stack run <(echo 🐧🐧)`
+- `stack run -- reduce file.birb` or `stack run -- reduce <(echo 🐧🐧)`
+- `stack run -- transpile <(echo 01000110100000011100111001110011100111010)`
+  to generate a birb program that calculates $5^5$
 - `stack install` so you can enjoy `birb` from anywhere
 
 If the output cannot be translated to birbs, the raw lambda calculus
@@ -126,10 +145,8 @@ sometimes manually converted the term back to birbs.
 
 Birb is Turing complete, since one can construct any term of the
 [Jot](https://esolangs.org/wiki/Jot) variant of Iota. A Jot term
-`((X s) k)` is equivalent to `🐦X🦢🐥`. Similarly, `(s (k X))` is
-equivalent to `🐦🐦🐧🦢🐥X`. This can be extended for arbitrary long terms
-using increasingly more complicated construction of composition
-combinators.
+`((X s) k)` is equivalent to `🐦🐦X🦢🐥`. Similarly, `(s (k X))` is
+equivalent to `🐦🦆X🐥🦢`.
 
 ------------------------------------------------------------------------
 
