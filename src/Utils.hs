@@ -4,4 +4,3 @@ module Utils
 
 invalid :: a
 invalid = error "invalid program state"
-

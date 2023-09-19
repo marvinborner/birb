@@ -3,11 +3,8 @@
 module Lib
   ( fromBirbs
   , fromTerm
-  , nf
   ) where
 
-import           Control.Concurrent.Async       ( mapConcurrently )
-import           Control.Monad                  ( void )
 import           Data.Bifunctor                 ( first
                                                 , second
                                                 )
@@ -56,18 +53,6 @@ fromTerm t =
       termsies = Map.fromList $ first parse <$> flipped
   in  birbify t termsies
 
-bruteForce :: String -> Integer -> IO ()
-bruteForce s n =
-  let combos    = mapM (const $ map fst birbs) [1 .. n]
-      birbsies  = Map.fromList $ second parse <$> birbs
-      termified = termify birbsies <$> combos
-      target    = parse s
-      huh t = nf t >>= \case
-        r | r == target -> putStrLn (fromTerm t)
-          | otherwise   -> return ()
-      go ts = void $ mapConcurrently huh ts
-  in  putStrLn ("trying " ++ show n) >> go termified
-
 -- this isn't really relevant but I'm too lazy to type the terms manually
 parse :: String -> Term
 parse = fst . go
@@ -88,7 +73,7 @@ birbs =
   , ('\x1F425', "!!1") -- front chick
   , ('\x1F423', "!!!@0@21") -- hatching chick
   , ('\x1F989', "!!@0@10") -- owl
-  , ('\x1F986', "!!@0@12") -- duck
+  , ('\x1F986', "!!!@0@12") -- duck
   , ('\x1F9A4', "!@!@1@00!@1@00") -- dodo
   , ('\x1F9A9', "!!!@@201") -- flamingo
   , ('\x1F9A2', "!!!@@20@10") -- swan

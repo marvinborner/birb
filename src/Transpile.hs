@@ -1,4 +1,4 @@
--- This code partly uses algorithms created by John Tromp.
+-- This code partly uses algorithms (drip/abstract) created by John Tromp.
 -- Since they did not license their code (afaik), I assume it's okay to reuse it.
 
 module Transpile
@@ -12,8 +12,14 @@ import           Utils
 data SKI = S | K | I | AppSKI SKI SKI | IdxSKI Int
   deriving (Eq, Ord)
 
-data Birb = Swan | Kool | Bird | Quacky
-  deriving (Eq, Ord, Show)
+data Birb = Swan | Kool | Idiot | Quacky
+  deriving (Eq, Ord)
+
+instance Show Birb where
+  showsPrec _ Swan   = showString "\x1F9A2"
+  showsPrec _ Kool   = showString "\x1F425"
+  showsPrec _ Idiot  = showString "\x1F426"
+  showsPrec _ Quacky = showString "\x1F986"
 
 instance Show SKI where
   showsPrec _ S = showString "s"
@@ -40,8 +46,7 @@ abstract e = if freeIn (== 0) e then occabstract e else AppSKI K (drip e) where
   isConst = not . freeIn (const True)
   occabstract (IdxSKI 0) = I
   occabstract (AppSKI m (IdxSKI 0)) | not (freeIn (== 0) m) = drip m
-  occabstract (AppSKI (AppSKI l m) l') | l == l' -- && freeIn (==0) e1
-                                                 =
+  occabstract (AppSKI (AppSKI l m) l') | l == l' =
     occabstract (AppSKI (AppSKI (AppSKI (AppSKI S S) K) l) m)
   occabstract (AppSKI m (AppSKI n l)) | isConst m && isConst n =
     occabstract (AppSKI (AppSKI (AppSKI S (abstract m)) n) l)
@@ -61,15 +66,29 @@ transpileSKI (Abs m  ) = abstract (transpileSKI m)
 fromSKI :: SKI -> Birb
 fromSKI S = Swan
 fromSKI K = Kool
-fromSKI I = Bird
+fromSKI I = Idiot
 fromSKI _ = invalid
 
+jotify :: SKI -> [Bool]
+jotify = reverse . go
+ where
+  go S            = [True, True, True, True, True, False, False, False]
+  go K            = [True, True, True, False, False]
+  go I            = go $ AppSKI (AppSKI S K) K
+  go (AppSKI a b) = True : (go a ++ go b)
+  go _            = invalid
+
+dejotify :: [Bool] -> SKI
+dejotify (False : js) = AppSKI (AppSKI (dejotify js) S) K
+dejotify (True  : js) = AppSKI S (AppSKI K (dejotify js))
+dejotify _            = I
+
 transpileBirb :: SKI -> [Birb]
-transpileBirb (AppSKI a b) = case [a, b] of
-  [AppSKI x l, AppSKI y r] -> invalid -- TODO
-  [AppSKI x l, r] -> [Bird, Bird] ++ transpileBirb x ++ [fromSKI a, fromSKI b]
-  [l, AppSKI r x] ->
-    [Bird, Quacky] ++ transpileBirb x ++ [fromSKI r, fromSKI l]
-  [l, r] -> [fromSKI l, fromSKI r]
-transpileBirb (IdxSKI _) = invalid
-transpileBirb s          = [fromSKI s]
+transpileBirb = go . dejotify . jotify
+ where
+  go (AppSKI a b) = case [a, b] of
+    [AppSKI x l, r] -> [Idiot, Idiot] ++ go x ++ [fromSKI l, fromSKI r]
+    [l, AppSKI r x] -> [Idiot, Quacky] ++ go x ++ [fromSKI r, fromSKI l]
+    [l, r] -> [fromSKI l, fromSKI r]
+  go (IdxSKI _) = invalid
+  go s          = [fromSKI s]

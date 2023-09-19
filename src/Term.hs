@@ -7,12 +7,6 @@ module Term
   ) where
 
 import           Control.Concurrent.MVar
-import           Data.IORef                     ( IORef
-                                                , modifyIORef
-                                                , newIORef
-                                                , readIORef
-                                                , writeIORef
-                                                )
 import           Data.List                      ( elemIndex )
 import           Data.Map.Strict                ( Map )
 import qualified Data.Map.Strict               as Map
@@ -76,7 +70,6 @@ toRedex = convertWorker (NameGen 1) []
     in  Rapp lhs rhs
   convertWorker _ ns (Idx i) =
     Ridx $ Num (if i < 0 || i >= length ns then i else ns !! i)
-  convertWorker _ _ _ = invalid
 
 fromRedex :: Redex -> Term
 fromRedex = convertWorker []
