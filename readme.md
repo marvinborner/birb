@@ -102,6 +102,12 @@ is more suitable:
 
 List $\langle X_1,X_2,\dots,X_n\rangle$: `[🦩]ⁿ🦩X2X1...XN`.
 
+## Boolean logic
+
+See this excellent [codegolf
+stackexchange](https://codegolf.stackexchange.com/a/266078/119961)
+answer.
+
 ## Busy ~~beavers~~ birbs
 
 Contestants:
